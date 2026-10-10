@@ -1,0 +1,29 @@
+{
+  "events": [
+    {
+      "id": "8fe938b8-c075-4b35-9aee-6116928188f1",
+      "occurred_at": "2026-03-10T18:30:00Z",
+      "device_id": "opaque-device-01",
+      "source": "editor",
+      "kind": "heartbeat",
+      "duration_seconds": 300,
+      "project": "devloop",
+      "entity": "app.py",
+      "language": "Python",
+      "tool": "VS Code",
+      "branch": "feature/private-api"
+    },
+    {
+      "id": "d53240c3-1896-4325-a751-fb6920cc5ea7",
+      "occurred_at": "2026-03-10T18:35:00Z",
+      "device_id": "opaque-device-01",
+      "source": "test",
+      "kind": "test_run",
+      "duration_seconds": 0,
+      "project": "devloop",
+      "tool": "pytest",
+      "success": true,
+      "magnitude": 42
+    }
+  ]
+}

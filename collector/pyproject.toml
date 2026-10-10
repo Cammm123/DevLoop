@@ -1,0 +1,27 @@
+[project]
+name = "devloop-collector"
+version = "0.1.0"
+description = "Privacy-preserving DevLoop coding activity collector"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "DevLoop" }]
+dependencies = []
+
+[project.scripts]
+devloop-collector = "devloop_collector.cli:main"
+devloop = "devloop_collector.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = ["pytest>=8.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/devloop_collector"]
