@@ -74,22 +74,26 @@ struct MediumDashboardWidgetView: View {
 struct AccessoryCircularView: View {
     let entry: DevLoopEntry
     var body: some View {
-        if let metric = entry.snapshot?.time {
-            Gauge(value: metric.progress) { Image(systemName: "timer") } currentValueLabel: { Text("\(Int(metric.progress * 100))").font(.caption.bold()) }.gaugeStyle(.accessoryCircular).widgetAccentable()
-        } else { Image(systemName: "circle.dashed") }
+        Group {
+            if let metric = entry.snapshot?.time {
+                Gauge(value: metric.progress) { Image(systemName: "timer") } currentValueLabel: { Text("\(Int(metric.progress * 100))").font(.caption.bold()) }.gaugeStyle(.accessoryCircular).widgetAccentable()
+            } else { Image(systemName: "circle.dashed") }
+        }.containerBackground(.clear, for: .widget)
     }
 }
 
 struct AccessoryRectangularView: View {
     let entry: DevLoopEntry
     var body: some View {
-        if let value = entry.snapshot {
-            VStack(alignment: .leading, spacing: 2) {
-                HStack { Label("DevLoop", systemImage: "circle.hexagongrid.fill"); Spacer(); Text("L\(value.level)") }.font(.headline)
-                Text("\(Int(value.time.progress * 100))% time · \(Int(value.output.progress * 100))% output")
-                Text("\(value.streak) day streak").font(.caption).foregroundStyle(.secondary)
-            }.widgetAccentable()
-        } else { Text("Open DevLoop to sync").font(.caption) }
+        Group {
+            if let value = entry.snapshot {
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack { Label("DevLoop", systemImage: "circle.hexagongrid.fill"); Spacer(); Text("L\(value.level)") }.font(.headline)
+                    Text("\(Int(value.time.progress * 100))% time · \(Int(value.output.progress * 100))% output")
+                    Text("\(value.streak) day streak").font(.caption).foregroundStyle(.secondary)
+                }.widgetAccentable()
+            } else { Text("Open DevLoop to sync").font(.caption) }
+        }.containerBackground(.clear, for: .widget)
     }
 }
 

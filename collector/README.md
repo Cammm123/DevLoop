@@ -35,8 +35,15 @@ devloop test-result --success --duration 13 --project myapp --tool pytest --coun
 devloop build-result --failure --duration 80 --project myapp --tool xcodebuild
 devloop ai --tool Claude --duration 120 --project myapp
 devloop milestone --title "Finished offline sync" --project myapp
+devloop github-sync --username Cammm123
 devloop retry
 ```
+
+### GitHub account tracking
+
+`github-sync` imports public `PushEvent` metadata for one GitHub account. It retains only the event ID for deduplication, timestamp, repository basename, branch, and a conservative magnitude of one commit per push. GitHub's public feed redacts per-push commit counts, so a push containing multiple commits still counts as one. Commit messages, authors, diffs, files, and source code are never retained. Repeated runs are idempotent through both a private mode-0600 cursor file and deterministic event UUIDs.
+
+Set `GITHUB_TOKEN` only if authenticated GitHub access is needed; never place it in the DevLoop config or command line. A timer may safely invoke the command every 15 minutes.
 
 Durations are clamped to 0–900 seconds. A supplied project or filename path is reduced to its basename. Control characters are removed, text is bounded, URL/remote-like values are rejected, and unknown fields are rejected. Git commands query only repository root name, branch, counts, status metadata, and changed-file names solely long enough to count them. They never request diffs, blobs, commit messages, identities, configuration, or remotes.
 

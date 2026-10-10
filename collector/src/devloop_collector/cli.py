@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,7 @@ from .client import APIClient, DeliveryError
 from .config import Config, ConfigError
 from .events import Event, EventValidationError
 from .gitmeta import GitMetadataError, latest_commit_changed_files, snapshot
+from .github import GitHubSyncError, default_state_file, fetch_pushes, load_seen, save_seen
 from .spool import Spool
 
 
@@ -145,6 +147,10 @@ def build_parser() -> argparse.ArgumentParser:
         git_parser = sub.add_parser(name)
         git_parser.add_argument("--repo", type=Path, default=Path.cwd())
 
+    github_sync = sub.add_parser("github-sync", help="import deduplicated GitHub push activity")
+    github_sync.add_argument("--username", required=True)
+    github_sync.add_argument("--state-file", type=Path)
+
     _add_result_parser(sub, "test-result")
     _add_result_parser(sub, "build-result")
 
@@ -167,6 +173,42 @@ def _retry(spool: Spool, client: APIClient) -> int:
     return 0 if remaining == 0 else 1
 
 
+def _github_sync(args: argparse.Namespace, config: Config, client: APIClient, spool: Spool) -> int:
+    state_file = args.state_file or default_state_file(args.username)
+    seen = load_seen(state_file)
+    pushes = fetch_pushes(
+        args.username,
+        token=os.environ.get("GITHUB_TOKEN"),
+        timeout=config.timeout_seconds,
+    )
+    sent = queued = rejected = 0
+    for push in sorted(pushes, key=lambda item: item.occurred_at):
+        if push.event_id in seen:
+            continue
+        event = push.to_event(username=args.username, device_id=config.device_id())
+        try:
+            client.send(event)
+        except DeliveryError as exc:
+            if exc.transient:
+                spool.append(event)
+                queued += 1
+                seen.add(push.event_id)
+            else:
+                rejected += 1
+        else:
+            sent += 1
+            seen.add(push.event_id)
+    save_seen(state_file, seen)
+    spool.retry(client.send, limit=_NORMAL_RETRY_LIMIT)
+    print(json.dumps({
+        "status": "ok" if rejected == 0 else "partial",
+        "sent": sent,
+        "queued": queued,
+        "rejected": rejected,
+    }))
+    return 0 if rejected == 0 else 1
+
+
 def main(argv: list[str] | None = None) -> int:
     try:
         args = build_parser().parse_args(argv)
@@ -174,6 +216,8 @@ def main(argv: list[str] | None = None) -> int:
         client, spool = APIClient(config), Spool(config.spool_file)
         if args.command == "retry":
             return _retry(spool, client)
+        if args.command == "github-sync":
+            return _github_sync(args, config, client, spool)
         event = _from_args(args, config.device_id())
         # Deliver the fresh event first. If connectivity is down, queue it without
         # generating a second burst of doomed retry requests.
@@ -192,7 +236,7 @@ def main(argv: list[str] | None = None) -> int:
             spool.retry(client.send, limit=_NORMAL_RETRY_LIMIT)
         print(json.dumps({"status": state, "event_id": event.id}))
         return 0
-    except (ConfigError, EventValidationError, GitMetadataError) as exc:
+    except (ConfigError, EventValidationError, GitMetadataError, GitHubSyncError) as exc:
         print(f"devloop: {exc}", file=sys.stderr)
         return 2
     except OSError:
