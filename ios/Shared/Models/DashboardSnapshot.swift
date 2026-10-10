@@ -114,13 +114,32 @@ extension JSONDecoder {
         }
         return decoder
     }
+
+    /// Cache dates use Foundation's native reference interval so a Date's
+    /// underlying Double survives JSON without Unix-epoch arithmetic.
+    static var devLoopCache: JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            return Date(timeIntervalSinceReferenceDate: try container.decode(Double.self))
+        }
+        return decoder
+    }
 }
 
 extension JSONEncoder {
     static var devLoop: JSONEncoder {
         let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
-        // Numeric timestamps preserve full Date precision in the private widget cache.
         encoder.dateEncodingStrategy = .secondsSince1970
+        return encoder
+    }
+
+    static var devLoopCache: JSONEncoder {
+        let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+        encoder.dateEncodingStrategy = .custom { date, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(date.timeIntervalSinceReferenceDate)
+        }
         return encoder
     }
 }

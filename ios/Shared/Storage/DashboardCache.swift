@@ -50,7 +50,7 @@ struct DashboardCache {
     func save(_ dashboard: DashboardSnapshot, now: Date = Date()) throws {
         let directory = try directory()
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        let data = try JSONEncoder.devLoop.encode(CachedDashboard(savedAt: now, dashboard: dashboard))
+        let data = try JSONEncoder.devLoopCache.encode(CachedDashboard(savedAt: now, dashboard: dashboard))
         try data.write(to: directory.appendingPathComponent(Self.filename), options: .atomic)
     }
 
@@ -58,7 +58,7 @@ struct DashboardCache {
         let directory = try directory()
         let url = directory.appendingPathComponent(Self.filename)
         guard FileManager.default.fileExists(atPath: url.path) else { return nil }
-        return try JSONDecoder.devLoop.decode(CachedDashboard.self, from: Data(contentsOf: url))
+        return try JSONDecoder.devLoopCache.decode(CachedDashboard.self, from: Data(contentsOf: url))
     }
 
     func clear() throws {
