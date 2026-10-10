@@ -10,6 +10,8 @@ __pycache__/
 *.db
 collector-spool.jsonl
 DerivedData/
+ios/.derived*/
+ios/*.xcodeproj/
 .build/
 *.xcodeproj/xcuserdata/
 *.xcworkspace/xcuserdata/

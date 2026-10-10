@@ -2,7 +2,7 @@
 
 ## Goal
 
-DevLoop is a private coding-fitness system for Cameron's Mac and Linux machines. It records activity metadata, computes sustainable progress metrics, and presents Time, Output, and Consistency rings in a native iPhone app and WidgetKit widgets.
+DevLoop is a private, self-hosted coding-fitness system for Mac and Linux machines. It records activity metadata, computes sustainable progress metrics, and presents Time, Output, and Consistency rings in a native iPhone app and WidgetKit widgets.
 
 ## Privacy boundary
 
@@ -81,4 +81,4 @@ Goals adapt gradually and stay within healthy bounds. DevLoop does not encourage
 
 ## Installation path
 
-The iOS project is generated and built on Cameron's Mac. The first private install uses Xcode automatic signing and a USB-connected, unlocked iPhone with Developer Mode enabled. After installation, the app operates independently and reaches the API over Tailscale. TestFlight can be added later for wireless distribution.
+The iOS project is generated and built on a Mac. Each fork must replace the checked-in example bundle identifiers, Apple team, Keychain service, and App Group with values it owns. The first private install uses Xcode automatic signing and a connected, unlocked iPhone with Developer Mode enabled. After installation, the app operates independently and reaches the API over Tailscale. TestFlight can be added later for wireless distribution.

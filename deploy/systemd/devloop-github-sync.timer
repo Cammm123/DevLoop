@@ -1,0 +1,12 @@
+[Unit]
+Description=Poll public GitHub activity for DevLoop
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+RandomizedDelaySec=60
+Persistent=true
+Unit=devloop-github-sync.service
+
+[Install]
+WantedBy=timers.target

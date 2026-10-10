@@ -1,0 +1,5 @@
+# Copy to ~/.config/devloop/config.toml, replace both values, and chmod 600.
+[collector]
+api_url = "https://your-device.your-tailnet.ts.net:9443"
+token = "use-the-same-token-as-DEVLOOP_API_TOKEN"
+timeout_seconds = 5
