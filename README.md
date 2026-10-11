@@ -4,6 +4,20 @@ DevLoop is a self-hosted, privacy-focused coding activity tracker. A small colle
 
 DevLoop does **not** collect source code, diffs, terminal commands or output, AI prompts or responses, environment variables, repository remotes, or arbitrary metadata.
 
+<p align="center">
+  <img src="docs/images/devloop-showcase.png" alt="DevLoop daily activity rings, trend chart, and private coding distributions displayed in restrained iPhone frames" width="100%">
+</p>
+
+<p align="center"><em>Real SwiftUI screens rendered with synthetic demonstration activity. No private repository or development data is shown.</em></p>
+
+## Interface
+
+<p align="center">
+  <img src="docs/images/overview-framed.png" alt="DevLoop daily rings and coding activity overview" width="43%">
+  &nbsp;&nbsp;
+  <img src="docs/images/insights-framed.png" alt="DevLoop activity trend and language and project distributions" width="43%">
+</p>
+
 ## What runs where
 
 ```text
